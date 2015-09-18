@@ -5,6 +5,9 @@ class Territory
     attr_reader :country
     attr_reader :links
 
+    attr_accessor :owner
+    attr_accessor :armies
+
     def initialize(nm, ctry, lnks)
         @links = lnks
         @name = nm
