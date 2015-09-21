@@ -54,7 +54,6 @@ class Game
         end
     end
 
-    def rate_territory(t)
 
     end
 
