@@ -1,6 +1,7 @@
 class Player
     attr_reader :num
     attr_reader :starting_territories
+    attr_reader :armies
 
     attr_accessor :territories
 
@@ -8,6 +9,7 @@ class Player
         @world = world
         @territories = { }
         @num = num
+        @armies = 0
     end
 
     def init
