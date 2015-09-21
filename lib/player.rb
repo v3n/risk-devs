@@ -54,8 +54,6 @@ class Player
 
             t[0][0].armies += 1
         end
-
-        @armies += armies
     end
 
     def calculate_muster
