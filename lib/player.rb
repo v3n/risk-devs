@@ -57,7 +57,7 @@ class Player
     end
 
     def calculate_muster
-        n = armies.size / 3
+        n = territories.size / 3
         n < 3 ? 3 : n
     end
 
