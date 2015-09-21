@@ -5,8 +5,7 @@ class Battle
         puts "attacker: " + attacker.to_s
         puts "defender: " + defender.to_s
 
-        return true if defender <= 0
-        return false if attacker <= 1
+        return attacker, defender if defender <= 0 or attacker <= 1
 
         nm_attk = (attacker >= 3) ? 3 : attacker
         nm_attk = 1 if attacker == 2
@@ -32,9 +31,11 @@ class Battle
     end
 
     def self.monte(attacker, defender)
-        # chosen by 
+        # iteration number chosen by 
         # http://stats.stackexchange.com/a/34710
-        result = Array.new(Random.rand(20) + 1) { |i| sim(attacker, defender) }
+        result = Array.new(Random.rand(20) + 1) { |i| sim(attacker, defender) }.map do |p|
+            p[1] == 0
+        end
 
         result.inject(0) { |sum, el| (el) ? sum + 1 : sum }.to_f / result.size
     end
