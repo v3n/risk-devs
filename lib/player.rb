@@ -17,7 +17,7 @@ class Player
     end
 
     def armies
-        @territories.reduce { |sum, t| sum += t.armies }
+        @territories.values.reduce(0) { |sum, t| sum += t.armies }
     end
 
     ## @ret => bool representing if attack occured
