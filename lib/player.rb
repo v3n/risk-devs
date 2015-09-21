@@ -63,4 +63,12 @@ class Player
             @territories.delete t
         end
     end
+
+    def log_current_territory_names
+        print "Player ##{ @num }: [ "
+        @territories.values.each do |t|
+            print "#{t.name} => #{t.armies}, "
+        end
+        print "]\n"
+    end    
 end
