@@ -61,27 +61,35 @@ class Player
         n < 3 ? 3 : n
     end
 
+    ## @tt => territory to evaluate
+    def eval_territory(tt)
+        t_mult = 1
+        raw_t_vals = tt.links.map do | stt | # map all adjacent territories
+            # currently evaluated adjacent territory
+            eval_tt = @world.territories[stt]
+
+            # ignore owned territories
+            if eval_tt.owner == tt.owner
+                next nil
+            end
+
+            t_mult += 1
+
+            # higher number = more danger 
+            eval_tt.armies.to_f / tt.armies.to_f 
+        end.compact
+
+        return -1 if raw_t_vals.nil? or raw_t_vals.size == 0
+
+        (raw_t_vals.inject(:+) / raw_t_vals.size) * (tt.links.size / t_mult) * rand(0.7..1.0)
+    end
+
+    ## evaluate all territories for player
     def eval_territories
         @territories.values.map do | tt | # map all territories
-            t_mult = 0
-            raw_t_vals = tt.links.map do | stt | # map all adjacent territories
-                # currently evaluated adjacent territory
-                eval_tt = @world.territories[stt]
-
-                # ignore owned territories
-                if eval_tt.owner == tt.owner
-                    next nil
-                end
-
-                t_mult += 1
-
-                # higher number = more danger 
-                eval_tt.armies.to_f / tt.armies.to_f 
-            end.compact
-
             # [Territory, real rating]
-            [tt, (raw_t_vals.inject(:+) / raw_t_vals.size) * t_mult * rand(0.9..1.1) ]
-        end.sort { |a,b| b[1] <=> a[1] }
+            [tt, eval_territory(tt)]
+        end.reject { |v| v[1] == -1 }.sort { |a,b| b[1] <=> a[1] }
     end
 
     ## @t => Territory
