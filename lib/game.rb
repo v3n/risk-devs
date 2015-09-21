@@ -54,14 +54,21 @@ class Game
         end
     end
 
-
+    def win?
+        @players.select { |p| p.territories.size > 0 }.size == 1
     end
 
-    def process(p)
-
+    def turn(p)
+        p.allocate_units p.calculate_muster
+        # p.log_current_territory_names
+        p.eval_territories.each { |t| break if p.attack_with t[0] }
     end
 
     def loop
+        while not win?
+            @players.each { |p| turn p if p.armies > 0 }
+        end
 
+        @players.select { |p| p.territories.size > 0 }[0].log_current_territory_names
     end
 end
