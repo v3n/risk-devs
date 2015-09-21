@@ -18,7 +18,16 @@ class Player
 
     ## @armies => number of armies
     def allocate_units(armies)
-        t = @territories.values.map do | tt | # map all territories
+        armies.times do 
+            t = eval_territories
+
+            t[0][0].armies += 1
+        end
+
+        @armies += armies
+    end
+    def eval_territories
+        @territories.values.map do | tt | # map all territories
             t_mult = 0
             raw_t_vals = tt.links.map do | stt | # map all adjacent territories
                 # currently evaluated adjacent territory
@@ -35,14 +44,9 @@ class Player
                 eval_tt.armies.to_f / tt.armies.to_f 
             end.compact
 
-            [tt, (raw_t_vals.inject(:+) / raw_t_vals.size) * t_mult ]
-        end.sort { |a,b| a[1] <=> b[1] }
-
-        armies.times do 
-            t[0][0].armies += 1
-
-            t.sort { |a,b| a[1] <=> b[1] }
-        end
+            # [Territory, real rating]
+            [tt, (raw_t_vals.inject(:+) / raw_t_vals.size) * t_mult * rand(0.9..1.1) ]
+        end.sort { |a,b| b[1] <=> a[1] }
     end
 
     ## @t => Territory
