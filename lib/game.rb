@@ -60,8 +60,7 @@ class Game
 
     def turn(p)
         p.allocate_units p.calculate_muster
-        # p.log_current_territory_names
-        p.eval_territories.each { |t| break if p.attack_with t[0] }
+        p.attack
     end
 
     def loop

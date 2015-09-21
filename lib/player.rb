@@ -20,31 +20,38 @@ class Player
         @territories.values.reduce(0) { |sum, t| sum += t.armies }
     end
 
-    ## @ret => bool representing if attack occured
-    def attack_with(territory)
-        attackable = territory.links.map { |t| ( @world.territories[t].owner == self) ? nil : @world.territories[t] }.compact
-        return false if attackable.size == 0
-
-        attackable.sort { |a,b| a.armies <=> b.armies }
-
-        t = attackable[0]
-
-        r_atk, r_def = Battle.sim(territory.armies, t.armies)
-        if r_def < 1
-            acquire_territory t
-            territory.armies = r_atk
-
-            territory.armies -= 1
-            t.armies += 1
-
-            # balance territory
-            while territory.armies > 1 and eval_territory(t) > eval_territory(territory)
-                territory.armies -= 1
-                t.armies += 1
-            end 
+    def attack
+        t = @territories.values.map do |t|
+            t.links.map do |l|
+                (@world.territories[l] != self) ? @world.territories[l] : nil
+            end.compact.map do |tt|
+                [t, tt, Battle.monte(t.armies, tt.armies)]
+            end.reduce do | target, tt |
+                target[2] > tt[2] ? target : tt
+            end
+        end.reduce do | target, t |
+            target[2] > t[2] ? target : t
         end
 
-        true
+        attack_target(t[0], t[1])
+    end
+
+    ## @ret => bool representing if attack occured
+    def attack_target(attacker, defender)
+        r_atk, r_def = Battle.sim(attacker.armies, defender.armies)
+        if r_def < 1
+            acquire_territory defender
+            attacker.armies = r_atk
+
+            attacker.armies -= 1
+            defender.armies += 1
+
+            # balance territory
+            while attacker.armies > 1 and eval_territory(defender) > eval_territory(attacker)
+                attacker.armies -= 1
+                defender.armies += 1
+            end 
+        end
     end
 
     ## @armies => number of armies
