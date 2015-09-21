@@ -26,6 +26,12 @@ class Player
 
         @armies += armies
     end
+
+    def calculate_muster
+        n = armies.size / 3
+        n < 3 ? 3 : n
+    end
+
     def eval_territories
         @territories.values.map do | tt | # map all territories
             t_mult = 0
