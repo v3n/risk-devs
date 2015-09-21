@@ -19,6 +19,34 @@ class Player
     def armies
         @territories.reduce { |sum, t| sum += t.armies }
     end
+
+    ## @ret => bool representing if attack occured
+    def attack_with(territory)
+        attackable = territory.links.map { |t| ( @world.territories[t].owner == self) ? nil : @world.territories[t] }.compact
+        return false if attackable.size == 0
+
+        attackable.sort { |a,b| a.armies <=> b.armies }
+
+        t = attackable[0]
+
+        r_atk, r_def = Battle.sim(territory.armies, t.armies)
+        if r_def < 1
+            acquire_territory t
+            territory.armies = r_atk
+
+            territory.armies -= 1
+            t.armies += 1
+
+            # balance territory
+            while territory.armies > 1 and eval_territory(t) > eval_territory(territory)
+                territory.armies -= 1
+                t.armies += 1
+            end 
+        end
+
+        true
+    end
+
     ## @armies => number of armies
     def allocate_units(armies)
         armies.times do 
