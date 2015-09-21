@@ -1,7 +1,8 @@
+require_relative 'battle.rb'
+
 class Player
     attr_reader :num
     attr_reader :starting_territories
-    attr_reader :armies
 
     attr_accessor :territories
 
@@ -9,13 +10,15 @@ class Player
         @world = world
         @territories = { }
         @num = num
-        @armies = 0
     end
 
     def init
         @starting_territories = @territories.dup
     end
 
+    def armies
+        @territories.reduce { |sum, t| sum += t.armies }
+    end
     ## @armies => number of armies
     def allocate_units(armies)
         armies.times do 
