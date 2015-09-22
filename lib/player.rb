@@ -109,11 +109,15 @@ class Player
         @territories[t.name.downcase.to_sym] = t
     end
 
-    ## @t => Territory
+   ## @t => Territory
     def remove_territory(t)
+        if t.is_a?(Territory)
+            t = t.name.downcase.to_sym
+        end
+
         if @territories.keys.include? t
-            @territories[:t].owner = nil
-            @territories[:t].armies = 0
+            @territories[t].owner = nil
+            @territories[t].armies = 0
             @territories.delete t
         end
     end
